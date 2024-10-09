@@ -1,13 +1,12 @@
-"use client"
-import { Footer } from '@/components/component/footer'
-import { Main } from '@/components/component/main'
-import { Navbar } from '@/components/component/navbar'
+"use client";
+import { Footer } from "@/components/component/footer";
+import { Main } from "@/components/component/main";
+import { Navbar } from "@/components/component/navbar";
 
-import React, {useEffect, useState } from 'react'
-
+import React, { useEffect, useState } from "react";
 
 function page() {
-  const [message, setMessage] = useState("loading")
+  /* const [message, setMessage] = useState("loading")
   useEffect(() => { 
     fetch("http://localhost:8080/api/home").then(
     response => response.json()
@@ -18,16 +17,14 @@ function page() {
       }
     )
   },[] )
-    return (
-      <div> {message}</div>
-    /*
+    */ return (
+    //  <div> {message}</div>
     <div>
-      <Navbar/> 
+      <Navbar />
       <Main />
       <Footer />
     </div>
-    */
-  )
+  );
 }
 
-export default page
+export default page;
