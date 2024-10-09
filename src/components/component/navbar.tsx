@@ -99,7 +99,9 @@ export function Navbar() {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuItem>Registrate</DropdownMenuItem>
+            <DropdownMenuItem>
+            <Link href="/login">Ingresar</Link>
+            </DropdownMenuItem>
             <DropdownMenuItem>Crea tu cuenta</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

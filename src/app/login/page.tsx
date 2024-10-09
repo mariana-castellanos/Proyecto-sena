@@ -1,14 +1,14 @@
 import { Footer } from '@/components/component/footer'
-import { Login } from '@/components/component/login'
+import { Login } from '../../components/component/login'
 import { Navbar } from '@/components/component/navbar'
 import React from 'react'
 
 function page() {
   return (
     <div>
-        <Navbar />
-        < Login/>
-        < Footer/>
+      <Navbar />
+      < Login />
+      < Footer />
     </div>
   )
 }
