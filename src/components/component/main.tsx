@@ -21,6 +21,28 @@ const PapeleriaSection = () => {
       .then((data) => setProductos(data))
       .catch((error) => console.error("Error al obtener productos:", error));
   }, []);
+
+  const [cart, setCart] = useState([]);
+  const [cartCount, setCartCount] = useState(0);
+  useEffect(() => {
+    const cartItems = JSON.parse(localStorage.getItem("cart") || "[]") || [];
+
+    setCartCount(cartItems.length); // Actualizamos el número de productos en el carrito
+  }, []);
+
+  const handleAddToCart = (product) => {
+    // Obtenemos los productos ya existentes en el carrito
+    const cartItems = JSON.parse(localStorage.getItem("cart") || "[]") || [];
+    // Añadimos el nuevo producto
+    cartItems.push(product);
+    // Guardamos de nuevo en localStorage
+    localStorage.setItem("cart", JSON.stringify(cartItems));
+    setCart(cartItems);
+    // Actualizamos el contador del carrito
+    setCartCount(cartItems.length);
+    console.log("se agregó, el total es: " + cartCount);
+  };
+
   return (
     <section className="py-12 md:py-16 lg:py-20">
       <div className="container px-4 md:px-6">
@@ -43,7 +65,9 @@ const PapeleriaSection = () => {
                   </h3>
                   <p className="text-gray-600">{`Marca: ${product.marca_producto}`}</p>
                   <p className="text-gray-800 font-bold">{`${product.precio_producto} COP`}</p>
-                  <Button size="sm">Agregar al carrito</Button>
+                  <Button size="sm" onClick={() => handleAddToCart(product)}>
+                    Agregar al carrito
+                  </Button>
                 </div>
               </div>
             ))

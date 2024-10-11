@@ -1,13 +1,55 @@
+"use client";
 import { Sheet, SheetTrigger, SheetContent } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { NavigationMenu, NavigationMenuList, NavigationMenuLink } from "@/components/ui/navigation-menu";
+import {
+  NavigationMenu,
+  NavigationMenuList,
+  NavigationMenuLink,
+} from "@/components/ui/navigation-menu";
 import { Input } from "@/components/ui/input";
-import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu";
-import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+} from "@/components/ui/dropdown-menu";
+import {
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+} from "@/components/ui/popover";
 import { JSX, SVGProps } from "react";
+import { useEffect, useState } from "react";
+
+interface User {
+  name: string;
+  role: string;
+}
 
 export function Navbar() {
+  const [user, setUser] = useState<User | null>(null);
+  useEffect(() => {
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      setUser(JSON.parse(storedUser)); // Guardar el usuario en el estado
+    }
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem("user"); // Borrar el usuario de localStorage
+    setUser(null); // Opcionalmente, puedes limpiar el estado también
+    window.location.href = "/"; // Redirigir al usuario a la página de login
+  };
+
+  const [cartCount, setCartCount] = useState(0);
+
+  // Al cargar el componente, obtenemos el número de productos en el carrito
+  useEffect(() => {
+    const cartItems = JSON.parse(localStorage.getItem("cart") || "[]") || [];
+    setCartCount(cartItems.length);
+  }, []);
+
   return (
     <header className="flex h-20 w-full shrink-0 items-center px-4 md:px-6">
       <Sheet>
@@ -27,16 +69,32 @@ export function Navbar() {
             <span className="text-lg font-semibold">Acme Inc</span>
           </Link>
           <nav className="grid gap-4 py-6">
-            <Link href="#" className="flex w-full items-center py-2 text-lg font-semibold" prefetch={false}>
+            <Link
+              href="#"
+              className="flex w-full items-center py-2 text-lg font-semibold"
+              prefetch={false}
+            >
               Home
             </Link>
-            <Link href="#" className="flex w-full items-center py-2 text-lg font-semibold" prefetch={false}>
+            <Link
+              href="#"
+              className="flex w-full items-center py-2 text-lg font-semibold"
+              prefetch={false}
+            >
               About
             </Link>
-            <Link href="#" className="flex w-full items-center py-2 text-lg font-semibold" prefetch={false}>
+            <Link
+              href="#"
+              className="flex w-full items-center py-2 text-lg font-semibold"
+              prefetch={false}
+            >
               Services
             </Link>
-            <Link href="#" className="flex w-full items-center py-2 text-lg font-semibold" prefetch={false}>
+            <Link
+              href="#"
+              className="flex w-full items-center py-2 text-lg font-semibold"
+              prefetch={false}
+            >
               Contact
             </Link>
           </nav>
@@ -85,9 +143,13 @@ export function Navbar() {
             className="w-full rounded-lg bg-background pl-8 md:w-[200px] lg:w-[336px]"
           />
         </div>
+
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="outline" size="icon" className="overflow-hidden rounded-full">
+            <Button
+              variant="outline"
+              className="overflow-hidden rounded-full flex items-center"
+            >
               <img
                 src="/usuario.png"
                 width={36}
@@ -96,19 +158,35 @@ export function Navbar() {
                 className="overflow-hidden rounded-full"
                 style={{ aspectRatio: "36/36", objectFit: "cover" }}
               />
+              {user && <p className="ml-2 text-sm">{user.name}</p>}
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuItem>
-            <Link href="/login">Ingresar</Link>
-            </DropdownMenuItem>
-            <DropdownMenuItem>Crea tu cuenta</DropdownMenuItem>
-          </DropdownMenuContent>
+          {user ? (
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onSelect={handleLogout}>Salir</DropdownMenuItem>
+              <DropdownMenuItem>Dependiendo el rol</DropdownMenuItem>
+            </DropdownMenuContent>
+          ) : (
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem asChild>
+                <Link href="/login">Ingresar</Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link href="/registro">Crear una cuenta</Link>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          )}
         </DropdownMenu>
+
         <Popover>
           <PopoverTrigger asChild>
             <Button variant="outline" size="icon">
               <ShoppingCartIcon className="h-5 w-5" />
+              {cartCount > 0 && (
+                <span className="absolute top-0 right-0 bg-red-500 text-white rounded-full px-2 text-xs">
+                  {cartCount}
+                </span>
+              )}
               <span className="sr-only">Cart</span>
             </Button>
           </PopoverTrigger>
@@ -116,7 +194,9 @@ export function Navbar() {
             <div className="grid gap-4">
               <div className="space-y-2">
                 <h4 className="font-medium leading-none">Cart</h4>
-                <p className="text-sm text-muted-foreground">View and manage your cart items.</p>
+                <p className="text-sm text-muted-foreground">
+                  View and manage your cart items.
+                </p>
               </div>
               <div className="grid gap-2">
                 <div className="grid grid-cols-3 items-center gap-4">
@@ -213,7 +293,9 @@ function SearchIcon(props: JSX.IntrinsicAttributes & SVGProps<SVGSVGElement>) {
   );
 }
 
-function ShoppingCartIcon(props: JSX.IntrinsicAttributes & SVGProps<SVGSVGElement>) {
+function ShoppingCartIcon(
+  props: JSX.IntrinsicAttributes & SVGProps<SVGSVGElement>
+) {
   return (
     <svg
       {...props}
