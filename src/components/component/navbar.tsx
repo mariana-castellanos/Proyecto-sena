@@ -29,7 +29,7 @@ interface User {
 }
 
 export function Navbar() {
-  const { cart, addToCart } = useCart();
+  const { cart, addToCart, increaseQuantity, decreaseQuantity } = useCart();
 
   const [user, setUser] = useState<User | null>(null);
   useEffect(() => {
@@ -46,7 +46,11 @@ export function Navbar() {
   };
 
   const total = cart
-    .reduce((sum, product) => sum + parseFloat(product.precio_producto), 0)
+    .reduce(
+      (sum, product) =>
+        sum + parseFloat(product.precio_producto) * product.cantidad,
+      0
+    )
     .toFixed(2);
 
   return (
@@ -215,15 +219,20 @@ export function Navbar() {
                       <p className="text-sm text-muted-foreground">{`${product.precio_producto} COP`}</p>
                     </div>
                     <div className="flex items-center justify-end gap-2">
-                      <Button variant="ghost" size="icon">
-                        <MinusIcon className="h-4 w-4" />
-                        <span className="sr-only">Remove</span>
-                      </Button>
-                      <span>1</span>
                       <Button
                         variant="ghost"
                         size="icon"
-                        onClick={() => addToCart(product)}
+                        onClick={() => decreaseQuantity(product.id_producto)}
+                      >
+                        <MinusIcon className="h-4 w-4" />
+                        <span className="sr-only">Remove</span>
+                      </Button>
+                      <span>{product.cantidad}</span>{" "}
+                      {/* Mostrar la cantidad actual */}
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => increaseQuantity(product.id_producto)}
                       >
                         <PlusIcon className="h-4 w-4" />
                         <span className="sr-only">Add</span>

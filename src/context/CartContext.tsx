@@ -81,11 +81,11 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
       (prevCart) =>
         prevCart
           .map((item) =>
-            item.id_producto === productId && item.cantidad > 1
-              ? { ...item, cantidad: item.cantidad - 1 }
+            item.id_producto === productId
+              ? { ...item, cantidad: item.cantidad - 1 } // Decrementamos la cantidad sin condicional
               : item
           )
-          .filter((item) => item.cantidad > 0) // Si la cantidad es 0, eliminamos el producto del carrito
+          .filter((item) => item.cantidad > 0) // Luego filtramos los productos con cantidad 0
     );
   };
 
