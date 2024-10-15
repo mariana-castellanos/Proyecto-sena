@@ -9,38 +9,26 @@ import {
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
+import { useCart } from "@/context/CartContext";
 
-const PapeleriaSection = () => {
-  // Estado para almacenar los productos obtenidos del backend
-  const [productos, setProductos] = useState([]);
+interface Product {
+  id_producto: number;
+  nombre_producto: string;
+  marca_producto: string;
+  precio_producto: string;
+  id_proveedor: number;
+  cantidad: number;
+}
 
-  // Hacer la llamada al backend cuando el componente se monta
-  useEffect(() => {
-    fetch("http://localhost:8080/api/v1/inventario")
-      .then((response) => response.json())
-      .then((data) => setProductos(data))
-      .catch((error) => console.error("Error al obtener productos:", error));
-  }, []);
+interface MainProps {
+  products: Product[];
+}
 
-  const [cart, setCart] = useState([]);
-  const [cartCount, setCartCount] = useState(0);
-  useEffect(() => {
-    const cartItems = JSON.parse(localStorage.getItem("cart") || "[]") || [];
+const PapeleriaSection = ({ products }: MainProps) => {
+  const { addToCart } = useCart();
 
-    setCartCount(cartItems.length); // Actualizamos el número de productos en el carrito
-  }, []);
-
-  const handleAddToCart = (product) => {
-    // Obtenemos los productos ya existentes en el carrito
-    const cartItems = JSON.parse(localStorage.getItem("cart") || "[]") || [];
-    // Añadimos el nuevo producto
-    cartItems.push(product);
-    // Guardamos de nuevo en localStorage
-    localStorage.setItem("cart", JSON.stringify(cartItems));
-    setCart(cartItems);
-    // Actualizamos el contador del carrito
-    setCartCount(cartItems.length);
-    console.log("se agregó, el total es: " + cartCount);
+  const handleAddToCart = (product: Product) => {
+    addToCart(product);
   };
 
   return (
@@ -48,8 +36,8 @@ const PapeleriaSection = () => {
       <div className="container px-4 md:px-6">
         <h2 className="text-2xl font-bold mb-8 md:text-3xl">Papelería</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {productos.length > 0 ? (
-            productos.map((product, index) => (
+          {products.length > 0 ? (
+            products.map((product, index) => (
               <div
                 key={index}
                 className="bg-background rounded-lg shadow-lg overflow-hidden"
@@ -81,6 +69,17 @@ const PapeleriaSection = () => {
 };
 
 export function Main() {
+  // Estado para almacenar los productos obtenidos del backend
+  const [productos, setProductos] = useState<Product[]>([]);
+
+  // Hacer la llamada al backend cuando el componente se monta
+  useEffect(() => {
+    fetch("http://localhost:8080/api/v1/inventario")
+      .then((response) => response.json())
+      .then((data) => setProductos(data))
+      .catch((error) => console.error("Error al obtener productos:", error));
+  }, []);
+
   return (
     <div className="w-full">
       {/* First Carousel */}
@@ -127,7 +126,7 @@ export function Main() {
       </div>
 
       {/* Papelería Section */}
-      <PapeleriaSection />
+      <PapeleriaSection products={productos} />
 
       {/* Second Carousel */}
       <div className="relative overflow-hidden pb-8">

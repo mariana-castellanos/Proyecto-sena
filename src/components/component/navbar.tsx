@@ -21,6 +21,7 @@ import {
 } from "@/components/ui/popover";
 import { JSX, SVGProps } from "react";
 import { useEffect, useState } from "react";
+import { useCart } from "@/context/CartContext";
 
 interface User {
   name: string;
@@ -28,6 +29,8 @@ interface User {
 }
 
 export function Navbar() {
+  const { cart, addToCart } = useCart();
+
   const [user, setUser] = useState<User | null>(null);
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
@@ -42,13 +45,9 @@ export function Navbar() {
     window.location.href = "/"; // Redirigir al usuario a la página de login
   };
 
-  const [cartCount, setCartCount] = useState(0);
-
-  // Al cargar el componente, obtenemos el número de productos en el carrito
-  useEffect(() => {
-    const cartItems = JSON.parse(localStorage.getItem("cart") || "[]") || [];
-    setCartCount(cartItems.length);
-  }, []);
+  const total = cart
+    .reduce((sum, product) => sum + parseFloat(product.precio_producto), 0)
+    .toFixed(2);
 
   return (
     <header className="flex h-20 w-full shrink-0 items-center px-4 md:px-6">
@@ -180,11 +179,18 @@ export function Navbar() {
 
         <Popover>
           <PopoverTrigger asChild>
-            <Button variant="outline" size="icon">
-              <ShoppingCartIcon className="h-5 w-5" />
-              {cartCount > 0 && (
-                <span className="absolute top-0 right-0 bg-red-500 text-white rounded-full px-2 text-xs">
-                  {cartCount}
+            <Button variant="outline" size="icon" className="relative">
+              <ShoppingCartIcon className="h-6 w-6" />
+              {cart.length > 0 && (
+                <span
+                  style={{
+                    backgroundColor: "red",
+                    color: "white",
+                    borderRadius: "50%",
+                  }}
+                  className="absolute -top-1 -right-1 inline-flex items-center justify-center w-4 h-4 text-xs font-bold leading-none text-white bg-red-600 rounded-full"
+                >
+                  {cart.length}
                 </span>
               )}
               <span className="sr-only">Cart</span>
@@ -199,44 +205,36 @@ export function Navbar() {
                 </p>
               </div>
               <div className="grid gap-2">
-                <div className="grid grid-cols-3 items-center gap-4">
-                  <div className="col-span-2">
-                    <p className="font-medium">Product Name</p>
-                    <p className="text-sm text-muted-foreground">$99.99</p>
+                {cart.map((product, index) => (
+                  <div
+                    key={index}
+                    className="grid grid-cols-3 items-center gap-4"
+                  >
+                    <div className="col-span-2">
+                      <p className="font-medium">{product.nombre_producto}</p>
+                      <p className="text-sm text-muted-foreground">{`${product.precio_producto} COP`}</p>
+                    </div>
+                    <div className="flex items-center justify-end gap-2">
+                      <Button variant="ghost" size="icon">
+                        <MinusIcon className="h-4 w-4" />
+                        <span className="sr-only">Remove</span>
+                      </Button>
+                      <span>1</span>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => addToCart(product)}
+                      >
+                        <PlusIcon className="h-4 w-4" />
+                        <span className="sr-only">Add</span>
+                      </Button>
+                    </div>
                   </div>
-                  <div className="flex items-center justify-end gap-2">
-                    <Button variant="ghost" size="icon">
-                      <MinusIcon className="h-4 w-4" />
-                      <span className="sr-only">Remove</span>
-                    </Button>
-                    <span>1</span>
-                    <Button variant="ghost" size="icon">
-                      <PlusIcon className="h-4 w-4" />
-                      <span className="sr-only">Add</span>
-                    </Button>
-                  </div>
-                </div>
-                <div className="grid grid-cols-3 items-center gap-4">
-                  <div className="col-span-2">
-                    <p className="font-medium">Another Product</p>
-                    <p className="text-sm text-muted-foreground">$49.99</p>
-                  </div>
-                  <div className="flex items-center justify-end gap-2">
-                    <Button variant="ghost" size="icon">
-                      <MinusIcon className="h-4 w-4" />
-                      <span className="sr-only">Remove</span>
-                    </Button>
-                    <span>2</span>
-                    <Button variant="ghost" size="icon">
-                      <PlusIcon className="h-4 w-4" />
-                      <span className="sr-only">Add</span>
-                    </Button>
-                  </div>
-                </div>
+                ))}
               </div>
               <div className="flex justify-between">
                 <p className="font-medium">Total</p>
-                <p className="font-medium">$199.98</p>
+                <p className="font-medium">{`${total} COP`}</p>
               </div>
               <div className="flex flex-col gap-2 lg:flex-row">
                 <Button size="lg">Checkout</Button>
