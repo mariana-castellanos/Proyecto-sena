@@ -22,6 +22,7 @@ import {
 import { JSX, SVGProps } from "react";
 import { useEffect, useState } from "react";
 import { useCart } from "@/context/CartContext";
+import { useRouter } from "next/navigation";
 
 interface User {
   name: string;
@@ -29,7 +30,8 @@ interface User {
 }
 
 export function Navbar() {
-  const { cart, addToCart, increaseQuantity, decreaseQuantity } = useCart();
+  const { cart, addToCart, increaseQuantity, decreaseQuantity, checkout } =
+    useCart();
 
   const [user, setUser] = useState<User | null>(null);
   useEffect(() => {
@@ -52,6 +54,25 @@ export function Navbar() {
       0
     )
     .toFixed(2);
+
+  const router = useRouter();
+
+  useEffect(() => {
+    console.log("Router:", router);
+  }, [router]);
+
+  const handleViewCart = () => {
+    // Verificar si hay un usuario en el localStorage
+    const loggedInUser = localStorage.getItem("user"); // Reemplaza "user" con la clave que estés usando
+    if (loggedInUser) {
+      // Si hay un usuario logueado, redirigir al carrito
+      router.push("/carrito");
+    } else {
+      // Si no hay usuario logueado, redirigir a la página de login
+      alert("Por favor, inicia sesión para ver tu carrito.");
+      router.push("/login?redirect=/carrito"); // Redirigir a login
+    }
+  };
 
   return (
     <header className="flex h-20 w-full shrink-0 items-center px-4 md:px-6">
@@ -246,8 +267,10 @@ export function Navbar() {
                 <p className="font-medium">{`${total} COP`}</p>
               </div>
               <div className="flex flex-col gap-2 lg:flex-row">
-                <Button size="lg">Checkout</Button>
-                <Button variant="outline" size="lg">
+                <Button size="lg" onClick={checkout}>
+                  Checkout
+                </Button>
+                <Button variant="outline" size="lg" onClick={handleViewCart}>
                   View Cart
                 </Button>
               </div>

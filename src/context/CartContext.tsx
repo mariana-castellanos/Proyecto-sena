@@ -5,6 +5,7 @@ import {
   ReactNode,
   useEffect,
 } from "react";
+import { Modal } from "@/components/ui/modal";
 
 // Definir el tipo de los productos en el carrito
 interface Product {
@@ -22,6 +23,9 @@ interface CartContextType {
   addToCart: (product: Product) => void;
   increaseQuantity: (productId: number) => void;
   decreaseQuantity: (productId: number) => void;
+  removeFromCart: (productId: number) => void;
+  checkout: () => void;
+  totalCart: number;
 }
 
 // Crear el contexto
@@ -89,11 +93,103 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     );
   };
 
+  const removeFromCart = (productId: number) => {
+    setCart((prevCart) =>
+      prevCart.filter((item) => item.id_producto !== productId)
+    );
+  };
+
+  const totalCart = cart.reduce((acc, item) => {
+    const precio = parseFloat(item.precio_producto); // Convertir el precio a número
+    return acc + precio * item.cantidad;
+  }, 0);
+
+  const [isModalOpen, setModalOpen] = useState(false);
+  const checkout = () => {
+    setModalOpen(true); // Abre el modal cuando se da click en "Checkout"
+  };
+
+  const confirmCheckout = () => {
+    const user = JSON.parse(localStorage.getItem("user") || "{}");
+    if (!user || !user.id_usuario) {
+      alert("Debes estar logueado para realizar la compra.");
+      return;
+    }
+
+    fetch("http://localhost:8080/api/v1/pedidos/checkout", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        cart, // El carrito con los productos
+        total: totalCart,
+        id_usuario: user.id_usuario, // Enviar el ID del cliente logueado
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log("Compra exitosa:", data);
+        alert("Compra realizada con éxito");
+        setCart([]); // Vaciar el carrito después de la compra
+        setModalOpen(false); // Cerrar el modal después de la confirmación
+      })
+      .catch((error) => {
+        console.error("Error al realizar la compra:", error);
+      });
+  };
+
   return (
     <CartContext.Provider
-      value={{ cart, addToCart, increaseQuantity, decreaseQuantity }}
+      value={{
+        cart,
+        addToCart,
+        increaseQuantity,
+        decreaseQuantity,
+        removeFromCart,
+        checkout,
+        totalCart,
+      }}
     >
       {children}
+
+      {/* Modal de confirmación */}
+      <Modal isOpen={isModalOpen} onClose={() => setModalOpen(false)}>
+        <h2 className="text-xl font-semibold">Confirmación de compra</h2>
+        <ul className="my-4">
+          {cart.map((item) => (
+            <li key={item.id_producto}>
+              {item.nombre_producto} - {item.cantidad} x $
+              {parseFloat(item.precio_producto).toFixed(2)}
+            </li>
+          ))}
+        </ul>
+        <p className="text-lg font-bold text-red-600">
+          Total: $
+          {cart
+            .reduce(
+              (acc, item) =>
+                acc + parseFloat(item.precio_producto) * item.cantidad,
+              0
+            )
+            .toFixed(2)}
+        </p>
+
+        <div className="flex justify-end mt-4">
+          <button
+            onClick={confirmCheckout}
+            className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 mr-2"
+          >
+            Confirmar compra
+          </button>
+          <button
+            onClick={() => setModalOpen(false)}
+            className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+          >
+            Cancelar
+          </button>
+        </div>
+      </Modal>
     </CartContext.Provider>
   );
 };

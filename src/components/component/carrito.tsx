@@ -1,40 +1,18 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { useState, SVGProps } from "react";
+import { useCart } from "@/context/CartContext";
+import { SVGProps } from "react";
 
 export function Carrito() {
-  const [cart, setCart] = useState([
-    {
-      id: 1,
-      name: "Cozy Blanket",
-      price: 29.99,
-      quantity: 1,
-    },
-    {
-      id: 2,
-      name: "Autumn Mug",
-      price: 12.99,
-      quantity: 2,
-    },
-    {
-      id: 3,
-      name: "Fall Fragrance Candle",
-      price: 16.99,
-      quantity: 1,
-    },
-  ]);
-  const removeFromCart = (id: number) => {
-    setCart(cart.filter((item) => item.id !== id));
-  };
-  const updateQuantity = (id: number, quantity: number) => {
-    setCart(
-      cart.map((item) => (item.id === id ? { ...item, quantity } : item))
-    );
-  };
-  const total = cart.reduce((acc, item) => acc + item.price * item.quantity, 0);
+  const { cart, increaseQuantity, decreaseQuantity, removeFromCart, checkout } =
+    useCart();
+  const total = cart.reduce(
+    (acc, item) => acc + parseFloat(item.precio_producto) * item.cantidad,
+    0
+  );
   return (
-    <div className="fixed inset-y-0 left-0 z-50 flex w-full max-w-xs flex-col bg-background shadow-lg md:w-96">
+    <div className="w-full max-w-xs  mx-auto  bg-background shadow-lg md:w-96">
       <header className="flex items-center justify-between border-b bg-muted px-6 py-4">
         <h2 className="text-lg font-semibold">Cart</h2>
         <Button variant="ghost" size="icon" className="text-muted-foreground">
@@ -52,38 +30,38 @@ export function Carrito() {
           <ul className="grid gap-6">
             {cart.map((item) => (
               <li
-                key={item.id}
+                key={item.id_producto}
                 className="grid grid-cols-[auto_1fr_auto] items-center gap-4"
               >
                 <img
                   src="/placeholder.svg"
-                  alt={item.name}
+                  alt={item.nombre_producto}
                   width={64}
                   height={64}
                   className="rounded-md"
                   style={{ aspectRatio: "64/64", objectFit: "cover" }}
                 />
                 <div className="grid gap-1">
-                  <h3 className="font-medium">{item.name}</h3>
+                  <h3 className="font-medium">{item.nombre_producto}</h3>
                   <p className="text-sm text-muted-foreground">
-                    ${item.price.toFixed(2)}
+                    ${parseFloat(item.precio_producto).toFixed(2)}
                   </p>
                 </div>
                 <div className="flex items-center gap-2">
                   <Button
                     variant="ghost"
                     size="icon"
-                    onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                    disabled={item.quantity === 1}
+                    onClick={() => decreaseQuantity(item.id_producto)} // Usamos decreaseQuantity del contexto
+                    disabled={item.cantidad === 1}
                   >
                     <MinusIcon className="h-4 w-4" />
                     <span className="sr-only">Decrease quantity</span>
                   </Button>
-                  <span className="text-sm font-medium">{item.quantity}</span>
+                  <span className="text-sm font-medium">{item.cantidad}</span>
                   <Button
                     variant="ghost"
                     size="icon"
-                    onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                    onClick={() => increaseQuantity(item.id_producto)}
                   >
                     <PlusIcon className="h-4 w-4" />
                     <span className="sr-only">Increase quantity</span>
@@ -91,7 +69,7 @@ export function Carrito() {
                   <Button
                     variant="ghost"
                     size="icon"
-                    onClick={() => removeFromCart(item.id)}
+                    onClick={() => removeFromCart(item.id_producto)}
                   >
                     <TrashIcon className="h-4 w-4 text-muted-foreground" />
                     <span className="sr-only">Remove from cart</span>
@@ -107,7 +85,9 @@ export function Carrito() {
           <p className="text-sm font-medium">Total:</p>
           <p className="text-lg font-semibold">${total.toFixed(2)}</p>
         </div>
-        <Button className="mt-4 w-full">Checkout</Button>
+        <Button className="mt-4 w-full" onClick={checkout}>
+          Checkout
+        </Button>
       </footer>
     </div>
   );
