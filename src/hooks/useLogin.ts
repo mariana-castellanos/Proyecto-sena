@@ -25,11 +25,19 @@ export function useLogin() {
         setUser(data.userData);
         localStorage.setItem("user", JSON.stringify(data.userData));
 
+        const userRole = data.userData.role;
+
         if (redirect){
             router.push(String(redirect))
-        } else {
-            router.push("/")
-        }
+        } else if  (userRole === "administrador") {
+            router.push("/admin");
+          } else if (userRole === "domiciliario") {
+            router.push("/domiciliario");
+          } else if (userRole === "cliente") {
+            router.push("/"); 
+          } else {
+            router.push("/"); 
+          } 
         
       } else {
         console.error("Error en el login:", data.message);
