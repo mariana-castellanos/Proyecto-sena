@@ -48,10 +48,11 @@ interface Pedido {
   telefono: string;
   direccion: string;
   fecha: string;
+  estado: string;
 }
 export function Pedidos() {
-  const [pedidosPendientes, setPedidosPendientes] = useState([]);
-  const [pedidosEntregados, setPedidosEntregados] = useState([]);
+  const [pedidosPendientes, setPedidosPendientes] = useState<Pedido[]>([]);
+  const [pedidosEntregados, setPedidosEntregados] = useState<Pedido[]>([]);
   const [user, setUser] = useState(null);
   let id_domiciliario = 0;
 
@@ -106,6 +107,43 @@ export function Pedidos() {
     }
   }, [id_domiciliario]);
 
+  function marcarComoEntregado(id_pedido: number) {
+    fetch(`http://localhost:8080/api/v1/pedidos/update/${id_pedido}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        estado: "entregado", // Cambiamos el estado a entregado
+      }),
+    })
+      .then((response) => {
+        if (response.ok) {
+          const pedidoEntregado = pedidosPendientes.find(
+            (pedido) => pedido.id_pedido === id_pedido
+          );
+
+          if (pedidoEntregado) {
+            setPedidosPendientes((prevPendientes) =>
+              prevPendientes.filter((pedido) => pedido.id_pedido !== id_pedido)
+            );
+
+            setPedidosEntregados((prevEntregados) => [
+              ...prevEntregados,
+              pedidoEntregado,
+            ]);
+            alert("Pedido marcado como entregado");
+          }
+          // Aquí puedes actualizar la lista de pedidos o hacer un nuevo fetch para actualizar
+        } else {
+          console.error("Error al actualizar el pedido");
+        }
+      })
+      .catch((error) => {
+        console.error("Error en la solicitud", error);
+      });
+  }
+
   return (
     <div className="flex flex-col w-full min-h-screen bg-[#f5f5f5]">
       <main className="flex-1 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-4 md:p-6">
@@ -155,6 +193,7 @@ export function Pedidos() {
                         <Button
                           size="sm"
                           className="mr-2 bg-[#0077b6] text-white hover:bg-[#005a8f]"
+                          onClick={() => marcarComoEntregado(pedido.id_pedido)}
                         >
                           Marcar como Entregado
                         </Button>
