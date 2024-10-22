@@ -10,13 +10,13 @@ export const loginService = async (email: string, password: string) => {
     return response; // Devuelve la respuesta
   };
 
-  export const registerService = async (nombre: string, email: string, password: string) => {
+  export const registerService = async (nombre: string, email: string, password: string, lastName: string, address: string, role: string = "cliente") => {
     const response = await fetch("http://localhost:8080/api/v1/auth/register",{
         method: "POST",
         headers:{
             "Content-Type": "application/json",
         },
-        body: JSON.stringify({nombre, email, password}),
+        body: JSON.stringify({nombre, email, password, lastName, address, role}),
     });
 
     if (!response.ok){

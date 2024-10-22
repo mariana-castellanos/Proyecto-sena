@@ -15,6 +15,10 @@ export function Registro() {
     setEmail,
     password,
     setPassword,
+    lastName,
+    setLastName,
+    address,
+    setAddress,
   } = useRegister();
 
   const { handleGoogleLogin } = useLogin();
@@ -42,14 +46,26 @@ export function Registro() {
                     onChange={(e) => setNombre(e.target.value)}
                   />
                 </div>
-                {/*<div className="space-y-2">
-                <Label htmlFor="lastName">Last Name</Label>
-                <Input id="lastName" type="text" placeholder="Doe" required />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="phone">Phone</Label>
-                <Input id="phone" type="tel" placeholder="+1 (555) 555-5555" required />
-              </div>*/}
+                <div className="space-y-2">
+                  <Label htmlFor="lastName">Last Name</Label>
+                  <Input
+                    id="lastName"
+                    type="text"
+                    placeholder="Doe"
+                    required
+                    value={lastName}
+                    onChange={(e) => setLastName(e.target.value)}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="phone">Phone</Label>
+                  <Input
+                    id="phone"
+                    type="tel"
+                    placeholder="+1 (555) 555-5555"
+                    required
+                  />
+                </div>
                 <div className="space-y-2">
                   <Label htmlFor="email">Email</Label>
                   <Input
@@ -72,10 +88,17 @@ export function Registro() {
                     onChange={(e) => setPassword(e.target.value)}
                   />
                 </div>
-                {/*<div className="space-y-2">
-                <Label htmlFor="address">Address</Label>
-                <Input id="address" type="text" placeholder="123 Main St, Anytown USA" required />
-              </div>*/}
+                <div className="space-y-2">
+                  <Label htmlFor="address">Address</Label>
+                  <Input
+                    id="address"
+                    type="text"
+                    placeholder="123 Main St, Anytown USA"
+                    required
+                    value={address}
+                    onChange={(e) => setAddress(e.target.value)}
+                  />
+                </div>
                 <Button type="submit" className="w-full">
                   Sign Up
                 </Button>
