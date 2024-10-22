@@ -6,7 +6,14 @@ import Link from "next/link";
 import { useLogin } from "@/hooks/useLogin";
 
 export function Login() {
-  const { email, setEmail, password, setPassword, handleLogin } = useLogin();
+  const {
+    email,
+    setEmail,
+    password,
+    setPassword,
+    handleLogin,
+    handleGoogleLogin,
+  } = useLogin();
 
   return (
     <div className="flex min-h-screen w-full">
@@ -43,9 +50,7 @@ export function Login() {
                 <Button type="submit" className="w-full">
                   Login
                 </Button>
-                <Button variant="outline" className="w-full">
-                  Login with Google
-                </Button>
+                <Button onClick={handleGoogleLogin}>Login with Google</Button>
               </div>
               <div className="mt-4 text-center text-sm">
                 Don&apos;t have an account?{" "}

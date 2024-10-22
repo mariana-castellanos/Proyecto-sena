@@ -4,6 +4,8 @@ import { loginService } from "@/lib/authService"; // Importa el servicio de aute
 import { useRouter, useSearchParams } from "next/navigation";
 import { serialize } from "v8";
 
+const GOOGLE_AUTH_URL = "http://localhost:8080/api/v1/auth/google"; // Ruta para el login con Google
+
 export function useLogin() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -47,11 +49,16 @@ export function useLogin() {
     }
   };
 
+  const handleGoogleLogin = () => {
+    window.location.href = "http://localhost:8080/api/v1/auth/google";
+  };
+
   return {
     email,
     setEmail,
     password,
     setPassword,
     handleLogin,
+    handleGoogleLogin,
   };
 }

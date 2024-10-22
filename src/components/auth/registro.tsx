@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { useRegister } from "@/hooks/useRegister";
+import { useLogin } from "@/hooks/useLogin";
 
 export function Registro() {
   const {
@@ -16,6 +17,7 @@ export function Registro() {
     setPassword,
   } = useRegister();
 
+  const { handleGoogleLogin } = useLogin();
   return (
     <div className="flex min-h-screen w-full">
       <div className="relative z-10 flex items-center justify-center h-full w-full">
@@ -84,6 +86,7 @@ export function Registro() {
                   Login
                 </Link>
               </div>
+              <Button onClick={handleGoogleLogin}>Login with Google</Button>
             </div>
           </div>
         </form>
