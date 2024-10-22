@@ -7,12 +7,13 @@ export function useRegister() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [address, setAddress] = useState("");
+    const [cel, setCel] = useState("");
 
 
     const handleRegister = async (e: React.FormEvent) => {
         e.preventDefault();
         try{
-            const response = await registerService(nombre, email, password, lastName, address);
+            const response = await registerService(nombre, email, password, lastName, address, cel);
             console.log("Registro exitoso", response);
             window.location.href = "/login";
         }catch (error){
@@ -31,6 +32,8 @@ export function useRegister() {
     setLastName,
     address,
     setAddress,
+    cel,
+    setCel,
     handleRegister,
   };
 }

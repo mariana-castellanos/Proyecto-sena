@@ -19,6 +19,8 @@ export function Registro() {
     setLastName,
     address,
     setAddress,
+    cel,
+    setCel,
   } = useRegister();
 
   const { handleGoogleLogin } = useLogin();
@@ -40,7 +42,7 @@ export function Registro() {
                   <Input
                     id="name"
                     type="text"
-                    placeholder="John"
+                    placeholder="Escribe tus nombres sin apellidos"
                     required
                     value={nombre}
                     onChange={(e) => setNombre(e.target.value)}
@@ -51,7 +53,7 @@ export function Registro() {
                   <Input
                     id="lastName"
                     type="text"
-                    placeholder="Doe"
+                    placeholder="Escribe tus apellidos completos"
                     required
                     value={lastName}
                     onChange={(e) => setLastName(e.target.value)}
@@ -62,8 +64,10 @@ export function Registro() {
                   <Input
                     id="phone"
                     type="tel"
-                    placeholder="+1 (555) 555-5555"
+                    placeholder="Numero celular"
                     required
+                    value={cel}
+                    onChange={(e) => setCel(e.target.value)}
                   />
                 </div>
                 <div className="space-y-2">
@@ -82,7 +86,7 @@ export function Registro() {
                   <Input
                     id="password"
                     type="password"
-                    placeholder="**********"
+                    placeholder="contraseña segura"
                     required
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
@@ -93,7 +97,7 @@ export function Registro() {
                   <Input
                     id="address"
                     type="text"
-                    placeholder="123 Main St, Anytown USA"
+                    placeholder="Escribe tu dirección completa"
                     required
                     value={address}
                     onChange={(e) => setAddress(e.target.value)}
