@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { useRegister } from "@/hooks/useRegister";
+import { useLogin } from "@/hooks/useLogin";
 
 export function Registro() {
   const {
@@ -14,8 +15,15 @@ export function Registro() {
     setEmail,
     password,
     setPassword,
+    lastName,
+    setLastName,
+    address,
+    setAddress,
+    cel,
+    setCel,
   } = useRegister();
 
+  const { handleGoogleLogin } = useLogin();
   return (
     <div className="flex min-h-screen w-full">
       <div className="relative z-10 flex items-center justify-center h-full w-full">
@@ -34,20 +42,34 @@ export function Registro() {
                   <Input
                     id="name"
                     type="text"
-                    placeholder="John"
+                    placeholder="Escribe tus nombres sin apellidos"
                     required
                     value={nombre}
                     onChange={(e) => setNombre(e.target.value)}
                   />
                 </div>
-                {/*<div className="space-y-2">
-                <Label htmlFor="lastName">Last Name</Label>
-                <Input id="lastName" type="text" placeholder="Doe" required />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="phone">Phone</Label>
-                <Input id="phone" type="tel" placeholder="+1 (555) 555-5555" required />
-              </div>*/}
+                <div className="space-y-2">
+                  <Label htmlFor="lastName">Last Name</Label>
+                  <Input
+                    id="lastName"
+                    type="text"
+                    placeholder="Escribe tus apellidos completos"
+                    required
+                    value={lastName}
+                    onChange={(e) => setLastName(e.target.value)}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="phone">Phone</Label>
+                  <Input
+                    id="phone"
+                    type="tel"
+                    placeholder="Numero celular"
+                    required
+                    value={cel}
+                    onChange={(e) => setCel(e.target.value)}
+                  />
+                </div>
                 <div className="space-y-2">
                   <Label htmlFor="email">Email</Label>
                   <Input
@@ -64,16 +86,23 @@ export function Registro() {
                   <Input
                     id="password"
                     type="password"
-                    placeholder="**********"
+                    placeholder="contraseña segura"
                     required
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                   />
                 </div>
-                {/*<div className="space-y-2">
-                <Label htmlFor="address">Address</Label>
-                <Input id="address" type="text" placeholder="123 Main St, Anytown USA" required />
-              </div>*/}
+                <div className="space-y-2">
+                  <Label htmlFor="address">Address</Label>
+                  <Input
+                    id="address"
+                    type="text"
+                    placeholder="Escribe tu dirección completa"
+                    required
+                    value={address}
+                    onChange={(e) => setAddress(e.target.value)}
+                  />
+                </div>
                 <Button type="submit" className="w-full">
                   Sign Up
                 </Button>
@@ -84,6 +113,7 @@ export function Registro() {
                   Login
                 </Link>
               </div>
+              <Button onClick={handleGoogleLogin}>Login with Google</Button>
             </div>
           </div>
         </form>

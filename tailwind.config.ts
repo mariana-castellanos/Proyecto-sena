@@ -49,6 +49,12 @@ const config: Config = {
               "foreground": "hsl(var(--card-foreground))"
             }
           },
+          red: {
+            500: "#ef4444", // Esto es el rojo predeterminado de Tailwind
+            600: "#dc2626", // Para hover o estados más oscuros
+            700: "#b91c1c",
+          },
+        
       borderRadius: {
             "lg": "var(--radius)",
             "md": "calc(var(--radius) - 2px)",

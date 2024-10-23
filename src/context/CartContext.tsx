@@ -156,6 +156,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
       {/* Modal de confirmación */}
       <Modal isOpen={isModalOpen} onClose={() => setModalOpen(false)}>
         <h2 className="text-xl font-semibold">Confirmación de compra</h2>
+
         <ul className="my-4">
           {cart.map((item) => (
             <li key={item.id_producto}>
@@ -164,6 +165,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
             </li>
           ))}
         </ul>
+
         <p className="text-lg font-bold text-red-600">
           Total: $
           {cart
@@ -174,7 +176,16 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
             )
             .toFixed(2)}
         </p>
-
+        <p
+          style={{
+            color: "red",
+            fontWeight: "bold",
+            marginTop: "1rem",
+            marginBottom: "1.5rem",
+          }}
+        >
+          Recuerda que el pago será contraentrega al llegar el domiciliario.
+        </p>
         <div className="flex justify-end mt-4">
           <button
             onClick={confirmCheckout}
