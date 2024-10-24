@@ -34,7 +34,7 @@ const PapeleriaSection = ({ products }: MainProps) => {
   return (
     <section className="py-12 md:py-16 lg:py-20">
       <div className="container px-4 md:px-6">
-        <h2 className="text-2xl font-bold mb-8 md:text-3xl">Papelería</h2>
+        <h2 className="text-2xl font-bold mb-8 md:text-3xl">Papelería y Regalos</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {products.length > 0 ? (
             products.map((product, index) => (

@@ -188,12 +188,11 @@ export function Navbar() {
           {user ? (
             <DropdownMenuContent align="end">
               <DropdownMenuItem onSelect={handleLogout}>Salir</DropdownMenuItem>
-              <DropdownMenuItem>Dependiendo el rol</DropdownMenuItem>
             </DropdownMenuContent>
           ) : (
             <DropdownMenuContent align="end">
               <DropdownMenuItem asChild>
-                <Link href="/login">Ingresar</Link>
+                <Link href="/login">Iniciar sesion</Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
                 <Link href="/registro">Crear una cuenta</Link>
@@ -224,9 +223,8 @@ export function Navbar() {
           <PopoverContent className="w-80">
             <div className="grid gap-4">
               <div className="space-y-2">
-                <h4 className="font-medium leading-none">Cart</h4>
+                <h4 className="font-medium leading-none">Carrito de compras</h4>
                 <p className="text-sm text-muted-foreground">
-                  View and manage your cart items.
                 </p>
               </div>
               <div className="grid gap-2">
@@ -268,10 +266,10 @@ export function Navbar() {
               </div>
               <div className="flex flex-col gap-2 lg:flex-row">
                 <Button size="lg" onClick={checkout}>
-                  Checkout
+                Continuar                
                 </Button>
                 <Button variant="outline" size="lg" onClick={handleViewCart}>
-                  View Cart
+                  Ver carrito
                 </Button>
               </div>
             </div>
