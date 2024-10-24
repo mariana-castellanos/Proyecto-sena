@@ -21,6 +21,7 @@ export function Recuperar() {
 
       if (response.ok) {
         alert("Se ha enviado un correo para restablecer tu contraseña.");
+        window.location.href = "http://localhost:3000/main";
       } else {
         alert("Error al intentar enviar el correo.");
       }
