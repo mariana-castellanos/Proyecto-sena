@@ -5,9 +5,12 @@ import React from "react";
 
 function page() {
   return (
-    <div>
+    <div className="flex flex-col min-h-screen">
       <Navbar />
-      <Carrito />
+      <div className="flex-1 flex items-center justify-center">
+        <Carrito />
+      </div>
+
       <Footer />
     </div>
   );

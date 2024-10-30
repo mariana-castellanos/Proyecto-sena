@@ -2,7 +2,10 @@
 
 import { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
-import { fetchPedidosDomiciliario } from "@/lib/fetchPedidos";
+import {
+  fetchPedidosDomiciliario,
+  fetchPedidosCliente,
+} from "@/lib/fetchPedidos";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -54,7 +57,9 @@ export function Pedidos() {
   const [pedidosPendientes, setPedidosPendientes] = useState<Pedido[]>([]);
   const [pedidosEntregados, setPedidosEntregados] = useState<Pedido[]>([]);
   const [user, setUser] = useState(null);
-  let id_domiciliario = 0;
+  const [id_domiciliario, setIdDomiciliario] = useState(0);
+  const [rol, setRol] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -62,8 +67,10 @@ export function Pedidos() {
       const userData = JSON.parse(localStorage.getItem("user") || "{}");
       setUser(userData);
       if (userData) {
-        id_domiciliario = userData.id_usuario; // Asignamos el id_domiciliario aquí
+        setIdDomiciliario(userData.id_usuario); // Asignamos el id_domiciliario aquí
+        setRol(userData.role);
       }
+      setIsLoading(false);
     }
   }, []);
   // Suponiendo que el domiciliario está logueado
@@ -90,7 +97,7 @@ export function Pedidos() {
   }, []);
 
   useEffect(() => {
-    if (id_domiciliario) {
+    if (id_domiciliario && rol === "domiciliario") {
       const fetchPedidos = async () => {
         const pendientes = await fetchPedidosDomiciliario(
           id_domiciliario,
@@ -104,6 +111,21 @@ export function Pedidos() {
         setPedidosEntregados(entregados);
       };
       fetchPedidos();
+    } else if (id_domiciliario && rol === "cliente") {
+      const fetchPedidos = async () => {
+        const pendientes = await fetchPedidosCliente(
+          id_domiciliario,
+          "pendiente"
+        );
+        const entregados = await fetchPedidosCliente(
+          id_domiciliario,
+          "entregado"
+        );
+        setPedidosPendientes(pendientes);
+        setPedidosEntregados(entregados);
+      };
+      fetchPedidos();
+      console.log("Pedidos: ", pedidosEntregados, pedidosPendientes);
     }
   }, [id_domiciliario]);
 
@@ -143,7 +165,9 @@ export function Pedidos() {
         console.error("Error en la solicitud", error);
       });
   }
-
+  if (isLoading) {
+    return <div>Cargando...</div>; // Puedes personalizar el mensaje de carga
+  }
   return (
     <div className="flex flex-col w-full min-h-screen bg-[#f5f5f5]">
       <main className="flex-1 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-4 md:p-6">
@@ -189,15 +213,20 @@ export function Pedidos() {
                       <TableCell className="text-[#666666]">
                         {pedido.fecha}
                       </TableCell>
-                      <TableCell>
-                        <Button
-                          size="sm"
-                          className="mr-2 bg-[#0077b6] text-white hover:bg-[#005a8f]"
-                          onClick={() => marcarComoEntregado(pedido.id_pedido)}
-                        >
-                          Marcar como Entregado
-                        </Button>
-                      </TableCell>
+
+                      {rol == "domiciliario" && (
+                        <TableCell>
+                          <Button
+                            size="sm"
+                            className="mr-2 bg-[#0077b6] text-white hover:bg-[#005a8f]"
+                            onClick={() =>
+                              marcarComoEntregado(pedido.id_pedido)
+                            }
+                          >
+                            Marcar como Entregado
+                          </Button>
+                        </TableCell>
+                      )}
                     </TableRow>
                   ))}
                 </TableBody>
@@ -210,9 +239,16 @@ export function Pedidos() {
         <div className="col-span-1 md:col-span-2 lg:col-span-1">
           <Card className="bg-white shadow-md">
             <CardHeader>
-              <CardTitle className="text-[#0077b6]">
-                Pedidos Entregados
-              </CardTitle>
+              {rol == "domiciliario" ? (
+                <CardTitle className="text-[#0077b6]">
+                  Pedidos Entregados
+                </CardTitle>
+              ) : (
+                <CardTitle className="text-[#0077b6]">
+                  Pedidos Comprados
+                </CardTitle>
+              )}
+
               <CardDescription className="text-[#666666]">
                 Estos son los pedidos que ya han sido entregados.
               </CardDescription>

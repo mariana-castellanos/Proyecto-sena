@@ -23,6 +23,7 @@ import { JSX, SVGProps } from "react";
 import { useEffect, useState } from "react";
 import { useCart } from "@/context/CartContext";
 import { useRouter } from "next/navigation";
+import Swal from "sweetalert2";
 
 interface User {
   name: string;
@@ -47,6 +48,10 @@ export function Navbar() {
     window.location.href = "/"; // Redirigir al usuario a la página de login
   };
 
+  const handleToPedidos = () => {
+    window.location.href = "/pedidos"; // Redirigir al usuario a la página de login
+  };
+
   const total = cart
     .reduce(
       (sum, product) =>
@@ -69,8 +74,19 @@ export function Navbar() {
       router.push("/carrito");
     } else {
       // Si no hay usuario logueado, redirigir a la página de login
-      alert("Por favor, inicia sesión para ver tu carrito.");
-      router.push("/login?redirect=/carrito"); // Redirigir a login
+      Swal.fire({
+        title: "Atención",
+        text: "Porfavor inicia sesion para ver tu carrito",
+        icon: "info",
+        confirmButtonText: "Aceptar",
+        confirmButtonColor: "#3085d6",
+        position: "center", // Se muestra en el centro
+      }).then((result) => {
+        if (result.isConfirmed) {
+          router.push("/login?redirect=/carrito");
+        }
+      });
+      // Redirigir a login
     }
   };
 
@@ -188,6 +204,9 @@ export function Navbar() {
           {user ? (
             <DropdownMenuContent align="end">
               <DropdownMenuItem onSelect={handleLogout}>Salir</DropdownMenuItem>
+              <DropdownMenuItem onSelect={handleToPedidos}>
+                Pedidos
+              </DropdownMenuItem>
             </DropdownMenuContent>
           ) : (
             <DropdownMenuContent align="end">
@@ -224,8 +243,7 @@ export function Navbar() {
             <div className="grid gap-4">
               <div className="space-y-2">
                 <h4 className="font-medium leading-none">Carrito de compras</h4>
-                <p className="text-sm text-muted-foreground">
-                </p>
+                <p className="text-sm text-muted-foreground"></p>
               </div>
               <div className="grid gap-2">
                 {cart.map((product, index) => (
@@ -266,7 +284,7 @@ export function Navbar() {
               </div>
               <div className="flex flex-col gap-2 lg:flex-row">
                 <Button size="lg" onClick={checkout}>
-                Continuar                
+                  Continuar
                 </Button>
                 <Button variant="outline" size="lg" onClick={handleViewCart}>
                   Ver carrito

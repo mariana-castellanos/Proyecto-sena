@@ -86,7 +86,7 @@ export function Carrito() {
           <p className="text-lg font-semibold">${total.toFixed(2)}</p>
         </div>
         <Button className="mt-4 w-full" onClick={checkout}>
-          Checkout
+          Comprar
         </Button>
       </footer>
     </div>

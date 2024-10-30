@@ -6,7 +6,7 @@ import {
   useEffect,
 } from "react";
 import { Modal } from "@/components/ui/modal";
-
+import Swal from "sweetalert2";
 // Definir el tipo de los productos en el carrito
 interface Product {
   id_producto: number;
@@ -111,8 +111,35 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
 
   const confirmCheckout = () => {
     const user = JSON.parse(localStorage.getItem("user") || "{}");
-    if (!user || !user.id_usuario) {
-      alert("Debes estar logueado para realizar la compra.");
+    if (!user) {
+      Swal.fire({
+        title: "Atención",
+        text: "Debes estar logueado para realizar la compra.",
+        icon: "info",
+        confirmButtonText: "Aceptar",
+        confirmButtonColor: "#3085d6",
+        position: "center", // Se muestra en el centro
+      }).then((result) => {
+        if (result.isConfirmed) {
+          // Redirige solo después de que el usuario presione "Aceptar"
+          window.location.href = "/login"; // Cambia '/login' a la ruta a la que quieras redirigir
+        }
+      });
+      return;
+    } else if (!user.id_usuario && !user.id) {
+      Swal.fire({
+        title: "Atención",
+        text: "Debes estar logueado para realizar la compra.",
+        icon: "info",
+        confirmButtonText: "Aceptar",
+        confirmButtonColor: "#3085d6",
+        position: "center", // Se muestra en el centro
+      }).then((result) => {
+        if (result.isConfirmed) {
+          // Redirige solo después de que el usuario presione "Aceptar"
+          window.location.href = "/login"; // Cambia '/login' a la ruta a la que quieras redirigir
+        }
+      });
       return;
     }
 
@@ -133,6 +160,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
         alert("Compra realizada con éxito");
         setCart([]); // Vaciar el carrito después de la compra
         setModalOpen(false); // Cerrar el modal después de la confirmación
+        localStorage.removeItem("cart");
       })
       .catch((error) => {
         console.error("Error al realizar la compra:", error);
