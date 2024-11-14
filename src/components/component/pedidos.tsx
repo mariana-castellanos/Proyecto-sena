@@ -24,6 +24,8 @@ import {
 } from "@/components/ui/table";
 import { JSX, SVGProps } from "react";
 import "leaflet/dist/leaflet.css";
+import Swal from "sweetalert2";
+import { Modal } from "@/components/ui/modal";
 
 // Importación dinámica de los componentes de react-leaflet
 const MapContainer = dynamic(
@@ -51,7 +53,15 @@ interface Pedido {
   telefono: string;
   direccion: string;
   fecha: string;
+  total: number;
   estado: string;
+  productos: Producto[];
+}
+
+interface Producto {
+  nombre_producto: string;
+  cantidad: number;
+  precio: number;
 }
 export function Pedidos() {
   const [pedidosPendientes, setPedidosPendientes] = useState<Pedido[]>([]);
@@ -60,6 +70,9 @@ export function Pedidos() {
   const [id_domiciliario, setIdDomiciliario] = useState(0);
   const [rol, setRol] = useState("");
   const [isLoading, setIsLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState("pendientes");
+  const [selectedPedido, setSelectedPedido] = useState<Pedido | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -154,7 +167,15 @@ export function Pedidos() {
               ...prevEntregados,
               pedidoEntregado,
             ]);
-            alert("Pedido marcado como entregado");
+
+            Swal.fire({
+              title: "Disfrutalo",
+              text: "Pedido marcado como entregado",
+              icon: "info",
+              confirmButtonText: "Aceptar",
+              confirmButtonColor: "#3085d6",
+              position: "center", // Se muestra en el centro
+            });
           }
           // Aquí puedes actualizar la lista de pedidos o hacer un nuevo fetch para actualizar
         } else {
@@ -168,129 +189,189 @@ export function Pedidos() {
   if (isLoading) {
     return <div>Cargando...</div>; // Puedes personalizar el mensaje de carga
   }
+
+  const handlePedidoClick = async (id_pedido: number) => {
+    try {
+      const response = await fetch(
+        `http://localhost:8080/api/v1/pedidos/detalles/${id_pedido}`
+      );
+      const data = await response.json();
+      console.log(data); // Esto es solo para depuración
+      setSelectedPedido(data); // Asegúrate de que data tenga la estructura correcta
+      setIsModalOpen(true);
+    } catch (error) {
+      console.error("Error obteniendo los detalles del pedido:", error);
+    }
+  };
+
   return (
     <div className="flex flex-col w-full min-h-screen bg-[#f5f5f5]">
       <main className="flex-1 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-4 md:p-6">
-        {/* Sección de Pedidos Pendientes */}
-        <div className="col-span-1 md:col-span-2 lg:col-span-2">
-          <Card className="bg-white shadow-md">
-            <CardHeader>
-              <CardTitle className="text-[#0077b6]">
-                Pedidos Pendientes
-              </CardTitle>
-              <CardDescription className="text-[#666666]">
-                Estos son los pedidos que aún no han sido entregados.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead className="text-[#0077b6]">Pedido</TableHead>
-                    <TableHead className="text-[#0077b6]">Cliente</TableHead>
-                    <TableHead className="text-[#0077b6]">Dirección</TableHead>
-                    <TableHead className="text-[#0077b6]">Fecha</TableHead>
-                    <TableHead className="text-[#0077b6]">Acción</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {pedidosPendientes.map((pedido: Pedido, index) => (
-                    <TableRow key={index}>
-                      <TableCell>
-                        <div className="font-medium text-[#0077b6]">
-                          {pedido.id_pedido}
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="font-medium text-[#0077b6]">
-                          {pedido.nombre}
-                        </div>
-                        <div className="text-[#666666]">{pedido.telefono}</div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="text-[#666666]">{pedido.direccion}</div>
-                      </TableCell>
-                      <TableCell className="text-[#666666]">
-                        {pedido.fecha}
-                      </TableCell>
-
-                      {rol == "domiciliario" && (
-                        <TableCell>
-                          <Button
-                            size="sm"
-                            className="mr-2 bg-[#0077b6] text-white hover:bg-[#005a8f]"
-                            onClick={() =>
-                              marcarComoEntregado(pedido.id_pedido)
-                            }
-                          >
-                            Marcar como Entregado
-                          </Button>
-                        </TableCell>
-                      )}
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </CardContent>
-          </Card>
+        <div className="flex justify-center mb-4">
+          <button
+            onClick={() => setActiveTab("pendientes")}
+            className={`px-4 py-2 text-lg font-semibold ${
+              activeTab === "pendientes"
+                ? "text-white bg-[#0077b6]"
+                : "text-[#0077b6]"
+            } rounded-t-lg`}
+          >
+            Pedidos Pendientes
+          </button>
+          <button
+            onClick={() => setActiveTab("entregados")}
+            className={`px-4 py-2 text-lg font-semibold ${
+              activeTab === "entregados"
+                ? "text-white bg-[#0077b6]"
+                : "text-[#0077b6]"
+            } rounded-t-lg`}
+          >
+            Pedidos Entregados
+          </button>
         </div>
+        {/* Sección de Pedidos Pendientes */}
+        {activeTab === "pendientes" && (
+          <div className="col-span-1 md:col-span-2 lg:col-span-2">
+            <Card className="bg-white shadow-md">
+              <CardHeader>
+                <CardTitle className="text-[#0077b6]">
+                  Pedidos Pendientes
+                </CardTitle>
+                <CardDescription className="text-[#666666]">
+                  Estos son los pedidos que aún no han sido entregados.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead className="text-[#0077b6]">Pedido</TableHead>
+                      <TableHead className="text-[#0077b6]">Cliente</TableHead>
+                      <TableHead className="text-[#0077b6]">
+                        Dirección
+                      </TableHead>
+                      <TableHead className="text-[#0077b6]">Fecha</TableHead>
+                      <TableHead className="text-[#0077b6]">Acción</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {pedidosPendientes.map((pedido: Pedido, index) => (
+                      <TableRow
+                        key={index}
+                        className="cursor-pointer"
+                        onClick={() => handlePedidoClick(pedido.id_pedido)}
+                      >
+                        <TableCell>
+                          <div className="font-medium text-[#0077b6]">
+                            {pedido.id_pedido}
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div className="font-medium text-[#0077b6]">
+                            {pedido.nombre}
+                          </div>
+                          <div className="text-[#666666]">
+                            {pedido.telefono}
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div className="text-[#666666]">
+                            {pedido.direccion}
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-[#666666]">
+                          {pedido.fecha}
+                        </TableCell>
+
+                        {rol == "domiciliario" && (
+                          <TableCell>
+                            <Button
+                              size="sm"
+                              className="mr-2 bg-[#0077b6] text-white hover:bg-[#005a8f]"
+                              onClick={() =>
+                                marcarComoEntregado(pedido.id_pedido)
+                              }
+                            >
+                              Marcar como Entregado
+                            </Button>
+                          </TableCell>
+                        )}
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </CardContent>
+            </Card>
+          </div>
+        )}
 
         {/* Sección de Pedidos Entregados */}
-        <div className="col-span-1 md:col-span-2 lg:col-span-1">
-          <Card className="bg-white shadow-md">
-            <CardHeader>
-              {rol == "domiciliario" ? (
-                <CardTitle className="text-[#0077b6]">
-                  Pedidos Entregados
-                </CardTitle>
-              ) : (
-                <CardTitle className="text-[#0077b6]">
-                  Pedidos Comprados
-                </CardTitle>
-              )}
+        {activeTab === "entregados" && (
+          <div className="col-span-1 md:col-span-2 lg:col-span-1">
+            <Card className="bg-white shadow-md">
+              <CardHeader>
+                {rol == "domiciliario" ? (
+                  <CardTitle className="text-[#0077b6]">
+                    Pedidos Entregados
+                  </CardTitle>
+                ) : (
+                  <CardTitle className="text-[#0077b6]">
+                    Pedidos Comprados
+                  </CardTitle>
+                )}
 
-              <CardDescription className="text-[#666666]">
-                Estos son los pedidos que ya han sido entregados.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead className="text-[#0077b6]">Pedido</TableHead>
-                    <TableHead className="text-[#0077b6]">Cliente</TableHead>
-                    <TableHead className="text-[#0077b6]">Dirección</TableHead>
-                    <TableHead className="text-[#0077b6]">Fecha</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {pedidosEntregados.map((pedido: Pedido, index) => (
-                    <TableRow key={index}>
-                      <TableCell>
-                        <div className="font-medium text-[#0077b6]">
-                          {pedido.id_pedido}
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="font-medium text-[#0077b6]">
-                          {pedido.nombre}
-                        </div>
-                        <div className="text-[#666666]">{pedido.telefono}</div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="text-[#666666]">{pedido.direccion}</div>
-                      </TableCell>
-                      <TableCell className="text-[#666666]">
-                        {pedido.fecha}
-                      </TableCell>
+                <CardDescription className="text-[#666666]">
+                  Estos son los pedidos que ya han sido entregados.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead className="text-[#0077b6]">Pedido</TableHead>
+                      <TableHead className="text-[#0077b6]">Cliente</TableHead>
+                      <TableHead className="text-[#0077b6]">
+                        Dirección
+                      </TableHead>
+                      <TableHead className="text-[#0077b6]">Fecha</TableHead>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </CardContent>
-          </Card>
-        </div>
-
+                  </TableHeader>
+                  <TableBody>
+                    {pedidosEntregados.map((pedido: Pedido, index) => (
+                      <TableRow
+                        key={index}
+                        className="cursor-pointer"
+                        onClick={() => handlePedidoClick(pedido.id_pedido)}
+                      >
+                        <TableCell>
+                          <div className="font-medium text-[#0077b6] ">
+                            {pedido.id_pedido}
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div className="font-medium text-[#0077b6]">
+                            {pedido.nombre}
+                          </div>
+                          <div className="text-[#666666]">
+                            {pedido.telefono}
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div className="text-[#666666]">
+                            {pedido.direccion}
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-[#666666]">
+                          {pedido.fecha}
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </CardContent>
+            </Card>
+          </div>
+        )}
         <div className="col-span-1 md:col-span-2 lg:col-span-3 mt-4">
           <Card className="bg-white shadow-md">
             <CardHeader>
@@ -366,6 +447,50 @@ export function Pedidos() {
             </CardContent>
           </Card>
         </div>
+
+        {isModalOpen && selectedPedido && (
+          <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
+            <h2 className="text-lg font-semibold">Detalles del Pedido</h2>
+            <p>
+              <strong>ID:</strong> {selectedPedido.id_pedido}
+            </p>
+            <p>
+              <strong>Fecha:</strong> {selectedPedido.fecha}
+            </p>
+            <p>
+              <strong>Total:</strong> ${Number(selectedPedido.total).toFixed(2)}
+            </p>
+
+            <h3 className="mt-4 font-semibold">Productos:</h3>
+            <ul>
+              {selectedPedido.productos &&
+              selectedPedido.productos.length > 0 ? (
+                selectedPedido.productos.map((producto, index) => (
+                  <li key={index}>
+                    <p>
+                      <strong>Producto: </strong> {producto.nombre_producto}
+                    </p>
+                    <p>
+                      <strong>Cantidad:</strong> {producto.cantidad}
+                    </p>
+                    <p>
+                      <strong>Precio:</strong> $
+                      {Number(producto.precio).toFixed(2)}
+                    </p>
+                  </li>
+                ))
+              ) : (
+                <p>No hay productos en este pedido</p>
+              )}
+            </ul>
+            <button
+              onClick={() => setIsModalOpen(false)}
+              className="mt-4 bg-blue-500 text-white py-2 px-4 rounded"
+            >
+              Cerrar
+            </button>
+          </Modal>
+        )}
       </main>
     </div>
   );

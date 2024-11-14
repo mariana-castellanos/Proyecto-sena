@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Swal from "sweetalert2";
 
 export function Recuperar() {
   const [email, setEmail] = useState("");
@@ -20,10 +21,27 @@ export function Recuperar() {
       );
 
       if (response.ok) {
-        alert("Se ha enviado un correo para restablecer tu contraseña.");
-        window.location.href = "http://localhost:3000/main";
+        Swal.fire({
+          title: "Revisa tu inbox",
+          text: "Se ha enviado un correo para restablecer tu contraseña.",
+          icon: "info",
+          confirmButtonText: "Aceptar",
+          confirmButtonColor: "#3085d6",
+          position: "center", // Se muestra en el centro
+        }).then((result) => {
+          if (result.isConfirmed) {
+            window.location.href = "http://localhost:3000/main";
+          }
+        });
       } else {
-        alert("Error al intentar enviar el correo.");
+        Swal.fire({
+          title: "Ocurrió un error",
+          text: "Error al intentar enviar el correo.",
+          icon: "info",
+          confirmButtonText: "Aceptar",
+          confirmButtonColor: "#3085d6",
+          position: "center", // Se muestra en el centro
+        });
       }
     } catch (error) {
       console.error("Error:", error);

@@ -157,7 +157,16 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
       .then((response) => response.json())
       .then((data) => {
         console.log("Compra exitosa:", data);
-        alert("Compra realizada con éxito");
+
+        Swal.fire({
+          title: "Gracias por tu compra",
+          text: "Compra realizada con éxito",
+          icon: "info",
+          confirmButtonText: "Aceptar",
+          confirmButtonColor: "#3085d6",
+          position: "center", // Se muestra en el centro
+        });
+
         setCart([]); // Vaciar el carrito después de la compra
         setModalOpen(false); // Cerrar el modal después de la confirmación
         localStorage.removeItem("cart");

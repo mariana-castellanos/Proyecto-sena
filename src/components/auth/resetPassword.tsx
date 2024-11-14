@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import Swal from "sweetalert2";
 
 export default function ResetPassword({ token }: { token: string }) {
   const [newPassword, setNewPassword] = useState("");
@@ -23,8 +24,19 @@ export default function ResetPassword({ token }: { token: string }) {
 
       if (response.ok) {
         console.log("Contraseña actualizada con éxito");
-        alert("Contraseña actualizada con éxito");
-        window.location.href = "/login";
+
+        Swal.fire({
+          title: "Actualización correcta",
+          text: "Contraseña actualizada con éxito",
+          icon: "info",
+          confirmButtonText: "Aceptar",
+          confirmButtonColor: "#3085d6",
+          position: "center", // Se muestra en el centro
+        }).then((result) => {
+          if (result.isConfirmed) {
+            window.location.href = "/login";
+          }
+        });
       } else {
         console.error("Error al actualizar la contraseña");
       }
