@@ -90,6 +90,10 @@ export function Navbar() {
     }
   };
 
+  const handleToPerfil = () => {
+    router.push("/perfil");
+  };
+
   return (
     <header className="flex h-20 w-full shrink-0 items-center px-4 md:px-6">
       <Sheet>
@@ -206,6 +210,9 @@ export function Navbar() {
               <DropdownMenuItem onSelect={handleLogout}>Salir</DropdownMenuItem>
               <DropdownMenuItem onSelect={handleToPedidos}>
                 Pedidos
+              </DropdownMenuItem>
+              <DropdownMenuItem onSelect={handleToPerfil}>
+                Perfil
               </DropdownMenuItem>
             </DropdownMenuContent>
           ) : (

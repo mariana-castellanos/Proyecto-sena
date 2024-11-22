@@ -1,13 +1,13 @@
 import { Footer } from "@/components/component/footer";
 import { Navbar } from "@/components/component/navbar";
-import { PerfilDomiciliario } from "@/components/component/perfil-domiciliario";
+import { Editar_perfil } from "@/components/component/editar_perfil";
 import React from "react";
 
 function page() {
   return (
     <div>
       <Navbar />
-      <PerfilDomiciliario />
+      <Editar_perfil />
       <Footer />
     </div>
   );
