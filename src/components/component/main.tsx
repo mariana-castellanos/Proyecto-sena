@@ -74,7 +74,7 @@ export function Main() {
 
   // Hacer la llamada al backend cuando el componente se monta
   useEffect(() => {
-    fetch("http://localhost:8080/api/v1/inventario")
+    fetch("https://backend-dzyq.onrender.com/api/v1/inventario")
       .then((response) => response.json())
       .then((data) => setProductos(data))
       .catch((error) => console.error("Error al obtener productos:", error));

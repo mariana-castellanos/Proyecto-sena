@@ -1,4 +1,5 @@
 import Link from "next/link"
+import { SVGProps } from "react"
 
 export function Footer() {
   return (
@@ -51,7 +52,7 @@ export function Footer() {
           </div>
         </div>
         <div className="grid gap-4">
-          <h3 className="text-lg font-semibold">Forma de Pago</h3>
+          <h3 className="text-lg font-semibold">Métodos de Pago</h3>
           <div className="grid gap-2 text-sm">
             <div className="flex items-center gap-2">
               <DollarSignIcon className="h-5 w-5" />
@@ -67,7 +68,7 @@ export function Footer() {
   )
 }
 
-function CreditCardIcon(props) {
+function CreditCardIcon(props: SVGProps<SVGSVGElement>) {
   return (
     <svg
       {...props}
@@ -87,8 +88,7 @@ function CreditCardIcon(props) {
   )
 }
 
-
-function DollarSignIcon(props) {
+function DollarSignIcon(props: SVGProps<SVGSVGElement>) {
   return (
     <svg
       {...props}
@@ -108,8 +108,7 @@ function DollarSignIcon(props) {
   )
 }
 
-
-function InstagramIcon(props) {
+function InstagramIcon(props: SVGProps<SVGSVGElement>) {
   return (
     <svg
       {...props}
@@ -130,8 +129,7 @@ function InstagramIcon(props) {
   )
 }
 
-
-function MapPinIcon(props) {
+function MapPinIcon(props: SVGProps<SVGSVGElement>) {
   return (
     <svg
       {...props}
@@ -151,8 +149,7 @@ function MapPinIcon(props) {
   )
 }
 
-
-function PhoneIcon(props) {
+function PhoneIcon(props: SVGProps<SVGSVGElement>) {
   return (
     <svg
       {...props}
@@ -171,8 +168,7 @@ function PhoneIcon(props) {
   )
 }
 
-
-function WalletCardsIcon(props) {
+function WalletCardsIcon(props: SVGProps<SVGSVGElement>) {
   return (
     <svg
       {...props}

@@ -23,7 +23,7 @@ export function Perfil() {
           console.log("ID del usuario:", user_object.id_usuario); // Accede a id_usuario
 
           const response = await fetch(
-            `http://localhost:8080/api/v1/usuario/usuario/${user_object.id_usuario}`
+            `https://backend-dzyq.onrender.com/api/v1/usuario/usuario/${user_object.id_usuario}`
           );
           const data = await response.json();
           setUser(data);
