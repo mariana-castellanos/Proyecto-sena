@@ -75,7 +75,7 @@ export function Login() {
               <div className="mt-4 text-center text-sm text-[#5D2C8C]">
                 Aún no tienes una cuenta?{" "}
                 <Link
-                  href="#"
+                  href="/registro"
                   className="underline text-[#5D2C8C]"
                   prefetch={false}
                 >
