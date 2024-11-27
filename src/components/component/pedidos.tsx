@@ -143,7 +143,7 @@ export function Pedidos() {
   }, [id_domiciliario]);
 
   function marcarComoEntregado(id_pedido: number) {
-    fetch(`https://backend-dzyq.onrender.com/api/v1/pedidos/update/${id_pedido}`, {
+    fetch(`http://localhost:8080/api/v1/pedidos/update/${id_pedido}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -193,7 +193,7 @@ export function Pedidos() {
   const handlePedidoClick = async (id_pedido: number) => {
     try {
       const response = await fetch(
-        `https://backend-dzyq.onrender.com/api/v1/pedidos/detalles/${id_pedido}`
+        `http://localhost:8080/api/v1/pedidos/detalles/${id_pedido}`
       );
       const data = await response.json();
       console.log(data); // Esto es solo para depuración

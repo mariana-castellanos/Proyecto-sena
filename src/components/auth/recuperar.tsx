@@ -10,7 +10,7 @@ export function Recuperar() {
     e.preventDefault();
     try {
       const response = await fetch(
-        "https://backend-dzyq.onrender.com/api/v1/auth/forgot-password",
+        "http://localhost:8080/api/v1/auth/forgot-password",
         {
           method: "POST",
           headers: {

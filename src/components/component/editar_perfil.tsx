@@ -20,7 +20,7 @@ export function Editar_perfil() {
       try {
         const userData = JSON.parse(localStorage.getItem("user") || "{}");
         const response = await fetch(
-          `https://backend-dzyq.onrender.com/api/v1/usuario/usuario/${userData.id_usuario}`
+          `http://localhost:8080/api/v1/usuario/usuario/${userData.id_usuario}`
         );
         const data = await response.json();
         setUser(data);
@@ -40,7 +40,7 @@ export function Editar_perfil() {
     try {
       const userData = JSON.parse(localStorage.getItem("user") || "{}");
       const response = await fetch(
-        `https://backend-dzyq.onrender.com/api/v1/usuario/update/${userData.id_usuario}`,
+        `http://localhost:8080/api/v1/usuario/update/${userData.id_usuario}`,
         {
           method: "PUT",
           headers: {

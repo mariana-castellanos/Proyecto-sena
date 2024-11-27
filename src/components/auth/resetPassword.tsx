@@ -9,7 +9,7 @@ export default function ResetPassword({ token }: { token: string }) {
     e.preventDefault();
     try {
       const response = await fetch(
-        "https://backend-dzyq.onrender.com/api/v1/auth/reset-password",
+        "http://localhost:8080/api/v1/auth/reset-password",
         {
           method: "POST",
           headers: {
